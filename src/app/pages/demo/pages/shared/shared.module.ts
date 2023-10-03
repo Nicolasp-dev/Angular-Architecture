@@ -3,15 +3,17 @@ import { CommonModule } from '@angular/common';
 
 import { SharedRoutingModule } from './shared-routing.module';
 import { SharedComponent } from './shared.component';
-import { ButtonsModule } from 'shared';
-
+import { ButtonsModule, ControlsModule } from 'app/shared';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [SharedComponent],
   imports: [
     CommonModule,
     SharedRoutingModule,
-    ButtonsModule
-  ]
+    ButtonsModule,
+    ReactiveFormsModule,
+    ControlsModule,
+  ],
 })
-export class SharedModule { }
+export class SharedModule {}
