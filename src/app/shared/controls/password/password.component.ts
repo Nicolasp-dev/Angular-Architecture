@@ -7,31 +7,40 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
+type PasswordType = 'password' | 'text';
+
 @Component({
-  selector: 'app-input',
-  templateUrl: './input.component.html',
-  styleUrls: ['./input.component.scss'],
+  selector: 'app-password',
+  templateUrl: './password.component.html',
+  styleUrls: ['./password.component.scss'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => InputComponent),
+      useExisting: forwardRef(() => PasswordComponent),
       multi: true,
     },
   ],
 })
-export class InputComponent implements ControlValueAccessor {
+export class PasswordComponent implements ControlValueAccessor {
   @Input() placeholder!: string;
   @Output() changed = new EventEmitter<string>();
 
   value!: string;
   isDisabled!: boolean;
+  passwordType: PasswordType;
 
-  constructor() {}
+  constructor() {
+    this.passwordType = 'password';
+  }
 
   private propagateChange: any = () => {};
   private propagateTouched: any = () => {};
 
-  writeValue(value: string): void {
+  togglePassword(): void {
+    this.passwordType = this.passwordType === 'password' ? 'text' : 'password';
+  }
+
+  writeValue(value: any): void {
     this.value = value;
   }
 
@@ -50,7 +59,7 @@ export class InputComponent implements ControlValueAccessor {
   onKeyup(event: any): void {
     const value = event.target.value;
     this.value = value;
-    
+
     this.propagateChange(value);
     this.changed.emit(value);
   }

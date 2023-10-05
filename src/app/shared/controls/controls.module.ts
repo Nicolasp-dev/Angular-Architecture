@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { InputModule } from './input/input.module';
+import { FormFieldModule } from './form-field/form-field.module';
+import { PasswordModule } from './password/password.module';
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, InputModule],
-  exports: [InputModule],
+  imports: [CommonModule, InputModule, FormFieldModule, PasswordModule],
+  exports: [InputModule, FormFieldModule, PasswordModule],
 })
 export class ControlsModule {}
