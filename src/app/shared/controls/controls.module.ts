@@ -1,3 +1,4 @@
+import { RadiosModule } from './radios/radios.module';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { InputModule } from './input/input.module';
@@ -15,6 +16,7 @@ import { CheckboxesModule } from './checkboxes/checkboxes.module';
     PasswordModule,
     SelectModule,
     CheckboxesModule,
+    RadiosModule,
   ],
   exports: [
     InputModule,
@@ -22,6 +24,7 @@ import { CheckboxesModule } from './checkboxes/checkboxes.module';
     PasswordModule,
     SelectModule,
     CheckboxesModule,
+    RadiosModule,
   ],
 })
 export class ControlsModule {}
