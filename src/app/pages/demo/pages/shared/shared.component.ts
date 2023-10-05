@@ -45,7 +45,14 @@ export class SharedComponent implements OnInit {
         },
       ],
       password: [null, { updateOn: 'blur', validators: [Validators.required] }],
-      select: [null, { updateOn: 'blur', validators: Validators.required }],
+      select: [null, { updateOn: 'change', validators: Validators.required }],
+      checkboxes: [
+        null,
+        {
+          updateOn: 'change',
+          validators: Validators.required,
+        },
+      ],
     });
   }
 
