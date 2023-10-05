@@ -6,6 +6,8 @@
   line-height: 18px;
   padding: 0 15px;
   outline: none;
+  display: flex;
+  align-items: center;
 
   &:focus {
     border: 1px solid $primary-dark;
