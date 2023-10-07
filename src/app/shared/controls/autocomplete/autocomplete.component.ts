@@ -83,10 +83,8 @@ export class AutocompleteComponent
   private propagateTouched: any = () => {};
 
   writeValue(value: Value): void {
-    console.log(value);
     const selectedOption = this.items.find((item) => item.value === value);
-    console.log(selectedOption);
-    this.formControl.setValue('');
+    this.formControl.setValue(selectedOption);
   }
 
   registerOnChange(fn: any): void {

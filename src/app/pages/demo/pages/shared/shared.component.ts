@@ -1,3 +1,4 @@
+import { NotificationService } from './../../../../services/notification/notification.service';
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
@@ -6,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ControlItem } from 'app/models/frontend';
-import { regex, regexErrors } from 'app/shared';
+import { markFormGroupTouched, regex, regexErrors } from 'app/shared';
 
 @Component({
   selector: 'app-shared',
@@ -18,8 +19,12 @@ export class SharedComponent implements OnInit {
   isInline!: boolean;
   regexErrors = regexErrors;
   items!: ControlItem[];
+  showSpinner = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private notificationService: NotificationService
+  ) {
     this.isInline = true;
 
     this.items = [
@@ -85,14 +90,46 @@ export class SharedComponent implements OnInit {
   }
 
   onPatchValue(): void {
-    this.form.patchValue({ input: 'test' });
+    this.form.patchValue({
+      input: 'test',
+      password: 123456,
+      autocomplete: 1,
+      select: 2,
+      checkboxes: [3],
+      radios: 4,
+      date: new Date().getTime(),
+      dateRange: {
+        from: new Date(2019, 5, 10).getTime(),
+        to: new Date(2023, 10, 7).getTime(),
+      },
+    });
   }
 
   onSubmit(): void {
     console.log('Submit');
+
+    if (!this.form.valid) {
+      markFormGroupTouched(this.form);
+    }
   }
 
   onToggleInline() {
     this.isInline = !this.isInline;
+  }
+
+  onToggleDisable() {
+    this.form.enabled ? this.form.disable() : this.form.enable();
+  }
+
+  onToggleSpinner(): void {
+    this.showSpinner = !this.showSpinner;
+  }
+
+  onError(): void {
+    this.notificationService.error('Everything is wrong!');
+  }
+
+  onSuccess(): void {
+    this.notificationService.success('Everything is fine!');
   }
 }

@@ -1,9 +1,11 @@
-// export const markFormGroupTouched = (formGroup) => {
-//     (Object as any).values(formGroup.controls).forEach(control => {
-//         control.markAsTouched();
+import { AbstractControl, FormGroup } from '@angular/forms';
 
-//         if (control.controls) {
-//             markFormGroupTouched(control);
-//         }
-//     });
-// };
+export const markFormGroupTouched = (formGroup: FormGroup) => {
+  (Object as any).values(formGroup.controls).forEach((control: any) => {
+    control.markAsTouched();
+
+    if (control.controls) {
+      markFormGroupTouched(control);
+    }
+  });
+};

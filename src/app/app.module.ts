@@ -12,6 +12,7 @@ import {
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE,
 } from '@angular/material/core';
+import { NotificationModule } from './services';
 
 const APP_DATE_FORMATS: MatDateFormats = {
   parse: {
@@ -32,6 +33,7 @@ const APP_DATE_FORMATS: MatDateFormats = {
     AppRoutingModule,
     BrowserAnimationsModule,
     MatNativeDateModule,
+    NotificationModule.forRoot(),
   ],
 
   providers: [
