@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "courseapp-7620d"
+  },
+  "targets": {
+    "courseapp-7620d": {
+      "hosting": {
+        "architecture": [
+          "courseapp-7620d"
+        ]
+      }
+    }
+  }
+}
