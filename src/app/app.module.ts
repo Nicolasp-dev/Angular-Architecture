@@ -17,7 +17,12 @@ import { NotificationModule } from './services';
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from 'enviroments/environment.dev';
-import { provideAuth,getAuth } from '@angular/fire/auth';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { effects, reducers } from './store';
 
 const APP_DATE_FORMATS: MatDateFormats = {
   parse: {
@@ -31,6 +36,10 @@ const APP_DATE_FORMATS: MatDateFormats = {
   },
 };
 
+// const StoreDevtools = !environment.production
+//   ? StoreDevtoolsModule.instrument({ maxAge: 50 })
+//   : [];
+
 @NgModule({
   declarations: [AppComponent, HeaderComponent],
   imports: [
@@ -42,6 +51,14 @@ const APP_DATE_FORMATS: MatDateFormats = {
     provideFirebaseApp(() => initializeApp(environment.firebase.config)),
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
+    StoreModule.forRoot(reducers, {
+      runtimeChecks: {
+        strictActionImmutability: true,
+        strictStateImmutability: true,
+      },
+    }),
+    EffectsModule.forRoot(effects),
+    StoreDevtoolsModule,
   ],
 
   providers: [

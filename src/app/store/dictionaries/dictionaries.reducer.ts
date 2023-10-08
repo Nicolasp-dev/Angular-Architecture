@@ -19,6 +19,7 @@ export function reducer(
 ): DictionariesState {
   switch (action.type) {
     case fromActions.Types.READ: {
+      console.log(state);
       return { ...state, loading: true, error: '' };
     }
 

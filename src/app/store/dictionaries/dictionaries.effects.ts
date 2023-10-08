@@ -1,91 +1,107 @@
 import { Injectable } from '@angular/core';
-import { Effect, Actions, ofType } from '@ngrx/effects';
+import { Actions, ofType, createEffect } from '@ngrx/effects';
 
-import { AngularFirestore, DocumentChangeAction } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 
 import { Observable, of, zip } from 'rxjs';
-import { map, switchMap, catchError, take } from 'rxjs/operators';
+import { map, switchMap, catchError, take, tap } from 'rxjs/operators';
 
-import { Dictionaries, Dictionary, Item, ControlItem } from './dictionaries.models';
+import {
+  Dictionaries,
+  Dictionary,
+  Item,
+  ControlItem,
+} from './dictionaries.models';
 
 import * as fromActions from './dictionaries.actions';
-import * as jsonCountries from '@src/assets/countries.json';
-
+import * as jsonCountries from '../../../assets/countries.json';
 
 type Action = fromActions.All;
 
-const documentToItem = (x: DocumentChangeAction<any>): Item => {
-    const data = x.payload.doc.data();
-    return {
-        id: x.payload.doc.id,
-        ...data
-    };
-};
-
 const itemToControlItem = (x: Item): ControlItem => ({
-    value: x.id,
-    label: x.name,
-    icon: x.icon
+  value: x.id,
+  label: x.name,
+  icon: x.icon,
 });
 
 const addDictionary = (items: Item[]): Dictionary => ({
-    items,
-    controlItems: [...items].map(x => itemToControlItem(x))
+  items,
+  controlItems: [...items].map((x) => itemToControlItem(x)),
 });
 
 @Injectable()
 export class DictionariesEffects {
+  rolesRef!: any;
+  specializationsRef!: any;
+  qualificationsRef!: any;
+  skillsRef!: any;
 
-    constructor(
-        private actions: Actions,
-        private afs: AngularFirestore
-    ) { }
+  constructor(private actions: Actions, private db: Firestore) {
+    this.rolesRef = collection(this.db, 'roles');
 
-    @Effect()
-    read: Observable<Action> = this.actions.pipe(
-        ofType(fromActions.Types.READ),
-        switchMap(() => {
-            return zip(
-                this.afs.collection('roles').snapshotChanges().pipe(
-                    take(1),
-                    map(items => items.map(x => documentToItem(x)))
-                ),
-                this.afs.collection('specializations').snapshotChanges().pipe(
-                    take(1),
-                    map(items => items.map(x => documentToItem(x)))
-                ),
-                this.afs.collection('qualifications').snapshotChanges().pipe(
-                    take(1),
-                    map(items => items.map(x => documentToItem(x)))
-                ),
-                this.afs.collection('skills').snapshotChanges().pipe(
-                    take(1),
-                    map(items => items.map(x => documentToItem(x)))
-                ),
-                of((jsonCountries as any).default.map(country => ({
-                    id: country.code.toUpperCase(),
-                    name: country.name,
-                    icon: {
-                        src: null,
-                        cssClass: 'fflag fflag-' + country.code.toUpperCase()
-                    }
-                })
-                ))
-            ).pipe(
-                map(([roles, specializations, qualifications, skills, countries]) => {
+    this.specializationsRef = collection(this.db, 'specializations');
+    this.qualificationsRef = collection(this.db, 'qualifications');
+    this.skillsRef = collection(this.db, 'skills');
+  }
 
-                    const dictionaries: Dictionaries = {
-                        roles: addDictionary(roles),
-                        specializations: addDictionary(specializations),
-                        qualifications: addDictionary(qualifications),
-                        skills: addDictionary(skills),
-                        countries: addDictionary(countries)
-                    };
+  read$: Observable<Action> = createEffect(() =>
+    this.actions.pipe(
+      ofType(fromActions.Types.READ),
+      switchMap(() => {
+        console.log('Action dispatched');
+        const roles$ = collectionData(this.rolesRef) as Observable<any>;
+        //prettier-ignore
+        const specializationsRef$ = collectionData(this.specializationsRef) as Observable<any>;
+        //prettier-ignore
+        const qualificationsRef$ = collectionData(this.qualificationsRef) as Observable<any>;
+        const skillsRef$ = collectionData(this.skillsRef) as Observable<any>;
 
-                    return new fromActions.ReadSuccess(dictionaries);
-                }),
-                catchError(err => of(new fromActions.ReadError(err.message)))
-            );
-        })
-    );
+        return zip(
+          roles$.pipe(
+            tap(() => console.log('go!')),
+            take(1)
+          ),
+          specializationsRef$.pipe(take(1)),
+          qualificationsRef$.pipe(take(1)),
+          skillsRef$.pipe(take(1)),
+          of(
+            (jsonCountries as any).default.map((country: any) => ({
+              id: country.code.toUpperCase(),
+              name: country.name,
+              icon: {
+                src: null,
+                cssClass: 'fflag fflag-' + country.code.toUpperCase(),
+              },
+            }))
+          )
+        ).pipe(
+          map(([roles, specializations, qualifications, skills, countries]) => {
+            console.log('Inside zip');
+            const dictionaries: any = {
+              roles: addDictionary(roles as Item[]),
+              specializations: addDictionary(specializations as Item[]),
+              qualifications: addDictionary(qualifications as Item[]),
+              skills: addDictionary(skills as Item[]),
+              countries: addDictionary(countries),
+            };
+
+            const data = new fromActions.ReadSuccess(dictionaries);
+            console.log(data);
+
+            return new fromActions.ReadSuccess(dictionaries);
+          }),
+          catchError((err) => of(new fromActions.ReadError(err.message)))
+        );
+      })
+    )
+  );
+
+  // private documentToItem = (x: DocumentChangeAction): Item => {
+  //   const data = x.payload.doc.data();
+  //   console.log('Execute');
+  //   return {
+  //     id: x.payload.doc.id,
+  //     ...data,
+  //   };
+  // };
 }
