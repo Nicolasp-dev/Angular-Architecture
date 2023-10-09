@@ -36,9 +36,9 @@ const APP_DATE_FORMATS: MatDateFormats = {
   },
 };
 
-// const StoreDevtools = !environment.production
-//   ? StoreDevtoolsModule.instrument({ maxAge: 50 })
-//   : [];
+const StoreDevtools = !environment.production
+  ? StoreDevtoolsModule.instrument({ maxAge: 50 })
+  : [];
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent],
@@ -58,7 +58,7 @@ const APP_DATE_FORMATS: MatDateFormats = {
       },
     }),
     EffectsModule.forRoot(effects),
-    StoreDevtoolsModule,
+    StoreDevtools,
   ],
 
   providers: [

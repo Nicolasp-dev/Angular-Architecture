@@ -9,9 +9,7 @@ export enum Types {
 
 export class Read implements Action {
   readonly type = Types.READ;
-  constructor() {
-    console.log('Hello');
-  }
+  constructor() {}
 }
 
 export class ReadSuccess implements Action {

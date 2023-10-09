@@ -95,13 +95,4 @@ export class DictionariesEffects {
       })
     )
   );
-
-  // private documentToItem = (x: DocumentChangeAction): Item => {
-  //   const data = x.payload.doc.data();
-  //   console.log('Execute');
-  //   return {
-  //     id: x.payload.doc.id,
-  //     ...data,
-  //   };
-  // };
 }
