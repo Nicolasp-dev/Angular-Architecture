@@ -1,20 +1,19 @@
 import { Injectable } from '@angular/core';
-import { Actions, ofType, createEffect } from '@ngrx/effects';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 
 import { Observable, of, zip } from 'rxjs';
-import { map, switchMap, catchError, take, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 
 import {
-  Dictionaries,
-  Dictionary,
-  Item,
   ControlItem,
+  Dictionary,
+  Item
 } from './dictionaries.models';
 
-import * as fromActions from './dictionaries.actions';
 import * as jsonCountries from '../../../assets/countries.json';
+import * as fromActions from './dictionaries.actions';
 
 type Action = fromActions.All;
 

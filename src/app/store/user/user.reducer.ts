@@ -21,6 +21,7 @@ export function reducer(
 ): UserState {
   switch (action.type) {
     // Init
+
     case fromActions.Types.INIT: {
       return { ...state, loading: true };
     }
@@ -44,6 +45,7 @@ export function reducer(
     }
 
     // Sign In
+
     case fromActions.Types.SIGN_IN_EMAIL: {
       return { ...state, loading: true };
     }
@@ -63,6 +65,7 @@ export function reducer(
     }
 
     // Sign Up
+
     case fromActions.Types.SIGN_UP_EMAIL: {
       return { ...state, loading: true };
     }
@@ -76,6 +79,7 @@ export function reducer(
     }
 
     // Sign Out
+
     case fromActions.Types.SIGN_OUT: {
       return { ...state, loading: true };
     }

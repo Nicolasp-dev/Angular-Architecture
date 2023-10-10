@@ -43,6 +43,7 @@ export class InitError implements Action {
 }
 
 // Sign In
+
 export class SignInEmail implements Action {
   readonly type = Types.SIGN_IN_EMAIL;
   constructor(public credentials: EmailPasswordCredentials) {}
@@ -59,28 +60,34 @@ export class SignInEmailError implements Action {
 }
 
 // Sign Up
+
 export class SignUpEmail implements Action {
   readonly type = Types.SIGN_UP_EMAIL;
   constructor(public credentials: EmailPasswordCredentials) {}
 }
+
 export class SignUpEmailSuccess implements Action {
   readonly type = Types.SIGN_UP_EMAIL_SUCCESS;
   constructor(public uid: string) {}
 }
+
 export class SignUpEmailError implements Action {
   readonly type = Types.SIGN_UP_EMAIL_ERROR;
   constructor(public error: string) {}
 }
 
 // Sign Out
+
 export class SignOut implements Action {
   readonly type = Types.SIGN_OUT;
   constructor() {}
 }
+
 export class SignOutSuccess implements Action {
   readonly type = Types.SIGN_OUT_SUCCESS;
   constructor() {}
 }
+
 export class SignOutError implements Action {
   readonly type = Types.SIGN_OUT_ERROR;
   constructor(public error: string) {}

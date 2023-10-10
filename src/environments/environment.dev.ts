@@ -11,5 +11,9 @@ export const environment = {
       authDomain: 'courseapp-7620d.firebaseapp.com',
       messagingSenderId: '894697122403',
     },
+    actionCodeSettings: {
+      url: 'http://localhost:4200/demo',
+      handleCodeInApp: true,
+    },
   },
 };

@@ -16,7 +16,7 @@ import { NotificationModule } from './services';
 
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { environment } from 'enviroments/environment.dev';
+import { environment } from '@src/environments/environment.dev';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 
 import { EffectsModule } from '@ngrx/effects';
