@@ -47,7 +47,6 @@ export class DictionariesEffects {
     this.actions.pipe(
       ofType(fromActions.Types.READ),
       switchMap(() => {
-        console.log('Action dispatched');
         const roles$ = collectionData(this.rolesRef) as Observable<any>;
         //prettier-ignore
         const specializationsRef$ = collectionData(this.specializationsRef) as Observable<any>;
@@ -57,7 +56,6 @@ export class DictionariesEffects {
 
         return zip(
           roles$.pipe(
-            tap(() => console.log('go!')),
             take(1)
           ),
           specializationsRef$.pipe(take(1)),
@@ -75,7 +73,6 @@ export class DictionariesEffects {
           )
         ).pipe(
           map(([roles, specializations, qualifications, skills, countries]) => {
-            console.log('Inside zip');
             const dictionaries: any = {
               roles: addDictionary(roles as Item[]),
               specializations: addDictionary(specializations as Item[]),
@@ -83,9 +80,6 @@ export class DictionariesEffects {
               skills: addDictionary(skills as Item[]),
               countries: addDictionary(countries),
             };
-
-            const data = new fromActions.ReadSuccess(dictionaries);
-            console.log(data);
 
             return new fromActions.ReadSuccess(dictionaries);
           }),

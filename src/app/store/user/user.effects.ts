@@ -6,6 +6,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  signInWithEmailAndPassword
 } from 'firebase/auth';
 // import { AngularFireAuth } from '@angular/fire/auth';
 // import { AngularFirestore } from '@angular/fire/firestore';
@@ -29,17 +30,25 @@ import * as fromActions from './user.actions';
 
 import { NotificationService } from '@app/services';
 import { Auth } from '@angular/fire/auth';
+import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 
 type Action = fromActions.All;
 
 @Injectable()
 export class UserEffects {
+  userAuth!: any;
+  userRefUid!: any;
+
   constructor(
     private actions: Actions,
     private auth: Auth,
+    private db: Firestore,
     private router: Router,
     private notification: NotificationService
-  ) {}
+  ) {
+    this.userAuth = getAuth()
+    this.userRefUid = collection(this.db, 'users');
+  }
 
   // @Effect()
   // init: Observable<Action> = this.actions.pipe(
@@ -64,42 +73,45 @@ export class UserEffects {
   //   })
   // );
 
-  // @Effect()
-  // signInEmail: Observable<Action> = this.actions.pipe(
-  //   ofType(fromActions.Types.SIGN_IN_EMAIL),
-  //   map((action: fromActions.SignInEmail) => action.credentials),
-  //   switchMap((credentials) =>
-  //     from(
-  //       this.afAuth.auth.signInWithEmailAndPassword(
-  //         credentials.email,
-  //         credentials.password
-  //       )
-  //     ).pipe(
-  //       switchMap((signInState) =>
-  //         this.afs
-  //           .doc<User>(`users/${signInState.user.uid}`)
-  //           .valueChanges()
-  //           .pipe(
-  //             take(1),
-  //             tap(() => {
-  //               this.router.navigate(['/']);
-  //             }),
-  //             map(
-  //               (user) =>
-  //                 new fromActions.SignInEmailSuccess(
-  //                   signInState.user.uid,
-  //                   user || null
-  //                 )
-  //             )
-  //           )
-  //       ),
-  //       catchError((err) => {
-  //         this.notification.error(err.message);
-  //         return of(new fromActions.SignInEmailError(err.message));
-  //       })
-  //     )
-  //   )
-  // );
+
+  signInEmail: Observable<Action> = createEffect(() =>
+    this.actions.pipe(
+    ofType(fromActions.Types.SIGN_IN_EMAIL),
+    map((action: fromActions.SignInEmail) => action.credentials),
+    switchMap((credentials) =>
+      from(
+        signInWithEmailAndPassword(
+          this.userAuth,
+          credentials.email,
+          credentials.password
+        )
+      ).pipe(
+        switchMap((signInState) => {
+          const user = collection(this.db, `users/${signInState.user.uid}`)
+
+          return of(collectionData(user)).pipe(
+            take(1),
+              tap(() => {
+                this.router.navigate(['/']);
+              }),
+              map(
+                (user) =>
+                  new fromActions.SignInEmailSuccess(
+                    signInState.user.uid,
+                    user || null
+                  )
+              )
+          )
+        }
+        ),
+        catchError((err) => {
+          this.notification.error(err.message);
+          return of(new fromActions.SignInEmailError(err.message));
+        })
+      )
+    )
+  ) )
+
 
   signUpEmail$: Observable<Action> = createEffect(() =>
     this.actions.pipe(
