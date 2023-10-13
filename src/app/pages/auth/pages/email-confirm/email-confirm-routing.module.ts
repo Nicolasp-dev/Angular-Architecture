@@ -3,14 +3,14 @@ import { Routes, RouterModule } from '@angular/router';
 import { EmailConfirmComponent } from './email-confirm.component';
 
 const routes: Routes = [
-    {
-        path: '',
-        component: EmailConfirmComponent
-    }
+  {
+    path: '',
+    component: EmailConfirmComponent,
+  },
 ];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class EmailConfirmRoutingModule { }
+export class EmailConfirmRoutingModule {}

@@ -16,13 +16,14 @@ import { NotificationModule } from './services';
 
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { environment } from '@src/environments/environment.dev';
+
 import { provideAuth, getAuth } from '@angular/fire/auth';
 
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { effects, reducers } from './store';
+import { environment } from '../environments/environment.dev';
 
 const APP_DATE_FORMATS: MatDateFormats = {
   parse: {

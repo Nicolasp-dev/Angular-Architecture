@@ -17,9 +17,9 @@ import * as fromUser from '@app/store/user';
 })
 export class LoginComponent implements OnInit {
 
-    loading$: Observable<boolean>;
+    loading$!: Observable<boolean>;
 
-    form: FormGroup;
+    form!: FormGroup;
     regexErrors = regexErrors;
 
     constructor(
