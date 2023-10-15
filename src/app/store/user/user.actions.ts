@@ -29,7 +29,7 @@ export class Init implements Action {
 
 export class InitAuthorized implements Action {
   readonly type = Types.INIT_AUTHORIZED;
-  constructor(public uid: string, public user: User) {}
+  constructor(public uid: string, public user: any) {}
 }
 
 export class InitUnauthorized implements Action {

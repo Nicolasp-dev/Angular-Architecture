@@ -14,7 +14,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent implements OnInit {
-  @Input() isAuthorized!: boolean;
+  @Input() isAuthorized!: boolean | null;
   @Output() signOut = new EventEmitter<void>();
 
   constructor() {}

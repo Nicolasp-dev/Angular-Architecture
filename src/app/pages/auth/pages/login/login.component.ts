@@ -10,60 +10,56 @@ import * as fromRoot from '@app/store';
 import * as fromUser from '@app/store/user';
 
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit {
+  loading$!: Observable<boolean>;
 
-    loading$!: Observable<boolean>;
+  form!: FormGroup;
+  regexErrors = regexErrors;
 
-    form!: FormGroup;
-    regexErrors = regexErrors;
+  constructor(private fb: FormBuilder, private store: Store<fromRoot.State>) {}
 
-    constructor(
-        private fb: FormBuilder,
-        private store: Store<fromRoot.State>
-    ) { }
+  ngOnInit(): void {
+    this.loading$ = this.store.pipe(select(fromUser.getLoading));
 
-    ngOnInit(): void {
+    this.form = this.fb.group({
+      email: [
+        null,
+        {
+          updateOn: 'blur',
+          validators: [
+            Validators.required,
+            Validators.maxLength(128),
+            Validators.pattern(regex.email),
+          ],
+        },
+      ],
+      password: [
+        null,
+        {
+          updateOn: 'change',
+          validators: [Validators.required],
+        },
+      ],
+    });
+  }
 
-        this.loading$ = this.store.pipe(select(fromUser.getLoading));
+  public onSubmit(): void {
+    if (this.form.valid) {
+      const value = this.form.value;
 
-        this.form = this.fb.group({
-            email: [null, {
-                updateOn: 'blur', validators: [
-                    Validators.required,
-                    Validators.maxLength(128),
-                    Validators.pattern(regex.email)
-                ]
-            }],
-            password: [null, {
-                updateOn: 'change', validators: [
-                    Validators.required
-                ]
-            }]
-        });
+      const credentials: fromUser.EmailPasswordCredentials = {
+        email: value.email,
+        password: value.password,
+      };
+
+      this.store.dispatch(new fromUser.SignInEmail(credentials));
+    } else {
+      markFormGroupTouched(this.form);
     }
-
-    public onSubmit(): void {
-
-        if (this.form.valid) {
-
-            const value = this.form.value;
-
-            const credentials: fromUser.EmailPasswordCredentials = {
-                email: value.email,
-                password: value.password
-            };
-
-            this.store.dispatch(new fromUser.SignInEmail(credentials));
-
-        } else {
-            markFormGroupTouched(this.form);
-        }
-
-    }
-
+  }
 }

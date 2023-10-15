@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import * as fromRoot from './store';
 import * as fromDictionaries from './store/dictionaries';
+import * as fromUser from './store/user';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -9,11 +11,17 @@ import * as fromDictionaries from './store/dictionaries';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  isAuthorized$!: Observable<boolean>;
+
   constructor(private store: Store<fromRoot.State>) {}
 
   ngOnInit() {
-    const x = new fromDictionaries.Read();
-    console.log(x);
+    this.isAuthorized$ = this.store.pipe(select(fromUser.getIsAuthorized));
+    this.store.dispatch(new fromUser.Init());
     this.store.dispatch(new fromDictionaries.Read());
+  }
+
+  onSignOut(): void {
+    this.store.dispatch(new fromUser.SignOut());
   }
 }

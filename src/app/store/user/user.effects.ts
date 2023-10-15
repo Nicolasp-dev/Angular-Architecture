@@ -50,28 +50,28 @@ export class UserEffects {
     this.userRefUid = collection(this.db, 'users');
   }
 
-  // @Effect()
-  // init: Observable<Action> = this.actions.pipe(
-  //   ofType(fromActions.Types.INIT),
-  //   switchMap(() => this.afAuth.authState.pipe(take(1))),
-  //   switchMap((authState) => {
-  //     if (authState) {
-  //       return this.afs
-  //         .doc<User>(`users/${authState.uid}`)
-  //         .valueChanges()
-  //         .pipe(
-  //           take(1),
-  //           map(
-  //             (user) =>
-  //               new fromActions.InitAuthorized(authState.uid, user || null)
-  //           ),
-  //           catchError((err) => of(new fromActions.InitError(err.message)))
-  //         );
-  //     } else {
-  //       return of(new fromActions.InitUnauthorized());
-  //     }
-  //   })
-  // );
+  init: Observable<Action> = createEffect(() =>
+    this.actions.pipe(
+      ofType(fromActions.Types.INIT),
+      switchMap(() => from(this.userAuth.currentUser)),
+      switchMap((authState: any) => {
+        if (authState) {
+          const user = collection(this.db, `users/${authState.uid}`);
+
+          return of(collectionData(user)).pipe(
+            take(1),
+            map(
+              (user) =>
+                new fromActions.InitAuthorized(authState.uid, user || null)
+            ),
+            catchError((err) => of(new fromActions.InitError(err.message)))
+          );
+        } else {
+          return of(new fromActions.InitUnauthorized());
+        }
+      })
+    )
+  );
 
   signInEmail: Observable<Action> = createEffect(() =>
     this.actions.pipe(
@@ -86,7 +86,7 @@ export class UserEffects {
           )
         ).pipe(
           switchMap((signInState) => {
-            const user = collection(this.db, `users/${signInState.user.uid}`);
+            const user = collection(this.db, `users${signInState.user.uid}`);
 
             return of(collectionData(user)).pipe(
               take(1),
