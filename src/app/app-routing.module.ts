@@ -15,7 +15,24 @@ const routes: Routes = [
         loadChildren: () =>
           import('./pages/demo/demo.module').then((m) => m.DemoModule),
       },
+      {
+        path: 'static',
+        loadChildren: () =>
+          import('./pages/static/static-routing.module').then(
+            (m) => m.StaticRoutingModule
+          ),
+      },
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'static/welcome',
+      },
     ],
+  },
+  {
+    path: '**',
+    pathMatch: 'full',
+    redirectTo: 'static/404',
   },
 ];
 
