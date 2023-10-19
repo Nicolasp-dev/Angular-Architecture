@@ -6,6 +6,7 @@ import { SharedComponent } from './shared.component';
 import { ButtonsModule, ControlsModule } from 'app/shared';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IndicatorsModule } from 'app/shared/indicators';
+import { PopupsModule } from '@app/shared/popups';
 
 @NgModule({
   declarations: [SharedComponent],
@@ -16,6 +17,7 @@ import { IndicatorsModule } from 'app/shared/indicators';
     ReactiveFormsModule,
     ControlsModule,
     IndicatorsModule,
+    PopupsModule,
   ],
 })
 export class SharedModule {}

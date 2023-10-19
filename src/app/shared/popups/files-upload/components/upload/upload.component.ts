@@ -1,58 +1,64 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  OnDestroy,
+} from '@angular/core';
+
+import { getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 
 import { Observable, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 
-
 @Component({
-    selector: 'app-upload',
-    templateUrl: './upload.component.html',
-    styleUrls: ['./upload.component.scss']
+  selector: 'app-upload',
+  templateUrl: './upload.component.html',
+  styleUrls: ['./upload.component.scss'],
 })
 export class UploadComponent implements OnInit, OnDestroy {
+  @Input() file!: File;
+  @Output() completed = new EventEmitter<string>();
 
-    @Input() file: File;
-    @Output() completed = new EventEmitter<string>();
+  percentage$!: Observable<number>;
+  // snapshot$!: Observable<firebase.storage.UploadTaskSnapshot>;
+  downloadURL!: string;
 
-    task: AngularFireUploadTask;
+  private destroy = new Subject<void>();
 
-    percentage$: Observable<number>;
-    snapshot$: Observable<firebase.storage.UploadTaskSnapshot>;
-    downloadURL: string;
+  private storage = getStorage();
+  constructor() {}
 
-    private destroy = new Subject<void>();
+  ngOnInit(): void {
+    this.startUpload();
+  }
 
-    constructor(private storage: AngularFireStorage) { }
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
 
-    ngOnInit(): void {
-        this.startUpload();
-    }
+  startUpload(): void {
+    const path = `${this.file.type.split('/')[0]}/${Date.now()}_${
+      this.file.name
+    }`;
 
-    ngOnDestroy(): void {
-        this.destroy.next();
-        this.destroy.complete();
-    }
+    const storageRef = ref(this.storage, path);
+    const uploadTask = uploadBytesResumable(storageRef, this.file);
 
-    startUpload(): void {
-        const path = `${this.file.type.split('/')[0]}/${Date.now()}_${this.file.name}`;
+    // this.percentage$ = this.task.percentageChanges();
+    // this.snapshot$ = this.task.snapshotChanges();
 
-        const storageRef = this.storage.ref(path);
+    // this.snapshot$
+    //   .pipe(
+    //     takeUntil(this.destroy),
+    //     finalize(async () => {
+    //       this.downloadURL = await storageRef.getDownloadURL().toPromise();
 
-        this.task = this.storage.upload(path, this.file);
-
-        this.percentage$ = this.task.percentageChanges();
-        this.snapshot$ = this.task.snapshotChanges();
-
-        this.snapshot$.pipe(
-            takeUntil(this.destroy),
-            finalize(async () => {
-                this.downloadURL = await storageRef.getDownloadURL().toPromise();
-
-                this.completed.next(this.downloadURL);
-            })
-        ).subscribe();
-
-    }
-
+    //       this.completed.next(this.downloadURL);
+    //     })
+    //   )
+    //   .subscribe();
+  }
 }
