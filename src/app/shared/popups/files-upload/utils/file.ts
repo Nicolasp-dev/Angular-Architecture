@@ -1,4 +1,4 @@
-export const dataURLtoFile = (dataurl, filename): File => {
+export const dataURLtoFile = (dataurl: any, filename: any): File => {
 
     const arr = dataurl.split(',');
     const mime = arr[0].match(/:(.*?);/)[1];

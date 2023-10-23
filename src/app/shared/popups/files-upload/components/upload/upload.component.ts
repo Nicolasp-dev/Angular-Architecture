@@ -1,16 +1,21 @@
 import {
   Component,
-  OnInit,
-  Input,
-  Output,
   EventEmitter,
+  Input,
   OnDestroy,
+  OnInit,
+  Output,
 } from '@angular/core';
 
-import { getStorage, ref, uploadBytesResumable } from 'firebase/storage';
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  UploadTask,
+} from 'firebase/storage';
 
-import { Observable, Subject } from 'rxjs';
-import { finalize, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-upload',
@@ -21,13 +26,13 @@ export class UploadComponent implements OnInit, OnDestroy {
   @Input() file!: File;
   @Output() completed = new EventEmitter<string>();
 
-  percentage$!: Observable<number>;
-  // snapshot$!: Observable<firebase.storage.UploadTaskSnapshot>;
+  percentage$ = new BehaviorSubject<number>(0);
   downloadURL!: string;
+  task!: UploadTask;
 
   private destroy = new Subject<void>();
-
   private storage = getStorage();
+
   constructor() {}
 
   ngOnInit(): void {
@@ -47,18 +52,31 @@ export class UploadComponent implements OnInit, OnDestroy {
     const storageRef = ref(this.storage, path);
     const uploadTask = uploadBytesResumable(storageRef, this.file);
 
-    // this.percentage$ = this.task.percentageChanges();
-    // this.snapshot$ = this.task.snapshotChanges();
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        this.percentage$.next(progress);
+      },
+      (error) => {
+        console.error('Error uploading:', error);
+      },
+      async () => {
+        this.downloadURL = await getDownloadURL(storageRef);
+        this.completed.next(this.downloadURL);
+      }
+    );
+  }
+  pauseUpload(): void {
+    this.task.pause();
+  }
 
-    // this.snapshot$
-    //   .pipe(
-    //     takeUntil(this.destroy),
-    //     finalize(async () => {
-    //       this.downloadURL = await storageRef.getDownloadURL().toPromise();
+  resumeUpload(): void {
+    this.task.resume();
+  }
 
-    //       this.completed.next(this.downloadURL);
-    //     })
-    //   )
-    //   .subscribe();
+  cancelUpload(): void {
+    this.task.cancel();
   }
 }

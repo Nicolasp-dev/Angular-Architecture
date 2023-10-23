@@ -23,7 +23,7 @@ export class DropZoneDirective {
   }
 
   @HostListener('dragleave', ['$event'])
-  onDragLeave($event) {
+  onDragLeave($event: any) {
     $event.preventDefault();
     this.hovered.emit(false);
   }

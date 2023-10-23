@@ -10,11 +10,11 @@ import { dataURLtoFile } from '../../utils';
 })
 export class CropperComponent implements OnInit {
 
-    @Input() imageFile: File;
+    @Input() imageFile!: File;
 
     @Output() changed = new EventEmitter<File>();
 
-    croppedImage: string;
+    croppedImage!: string | null | undefined;
 
     constructor() { }
 
